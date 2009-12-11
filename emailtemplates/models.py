@@ -16,9 +16,10 @@ class ModelTemplate(SlugModel, UserModel):
   def validate_context(self, context_dict):
     for required_context in self.required_contexts.all():
       if not context_dict.has_key(required_context.key):
-        raise template.VariableDoesNotExist(key)
-      if required_context.type and type(context_dict[required_context.key]) != required_context.type.model_class():
-        raise template.TemplateSyntaxError("invalid type for %s, expected %s" % (required_context.key, required_context.type.model_class()))
+        raise template.VariableDoesNotExist(required_context.key)
+      var_type = type(context_dict[required_context.key])
+      if required_context.type and not issubclass(var_type, required_context.type.model_class()):
+        raise template.TemplateSyntaxError("invalid type for %s; expected %s, got %s" % (required_context.key, required_context.type.model_class(), var_type))
     return True
   def render_string(self, template_text, context_dict):
     if self.validate_context(context_dict):
@@ -50,15 +51,22 @@ class EmailTemplate(ModelTemplate):
       return self.from_address
     site = Site.objects.get_current()
     return 'no-reply@%s' % site.domain
-  def send_email(self, to_address, context={}):
+  def send(self, to_address, context={}, attachments=None):
     html_body = self.render(context)
-    text_body = self.txt_body or linebreaksbr(striptags(html_body))
+    text_body = self.txt_body or striptags(html_body)
     subject = self.render_string(self.subject, context)
-    msg = EmailMultiAlternatives(subject, text_body, self.visible_from_address(), [to_address])
+    if isinstance(to_address, (str,unicode)):
+      to_address = (to_address,)
+    msg = EmailMultiAlternatives(subject, text_body, self.visible_from_address(), to_address)
     msg.attach_alternative(html_body, "text/html")
+
+    if attachments is not None:
+        for attach in attachments:
+            msg.attach(*attach)
+
     return msg.send()
   @staticmethod
-  def send(slug, to_address, context={}):
+  def send_template(slug, to_address, context={}, attachments=None):
     template = EmailTemplate.get_by_slug(slug)
-    return template.send_email(to_address, context)
+    return template.send(to_address, context, attachments)
 

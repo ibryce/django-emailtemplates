@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from csky.admin import UserModelAdmin
 from csky.widgets import WYMEditor
-from model_templates.models import *
+from emailtemplates.models import *
 
 
 class RequiredContextItemInline(admin.TabularInline):
@@ -22,7 +22,7 @@ class ModelTemplateAdmin(UserModelAdmin):
     (None,  {'fields': ('name','slug','body')}),
   )
   inlines = (RequiredContextItemInline,)
-admin.site.register(ModelTemplate, ModelTemplateAdmin)
+#admin.site.register(ModelTemplate, ModelTemplateAdmin)
 
 class EmailTemplateAdminForm(forms.ModelForm):
   class Meta:
