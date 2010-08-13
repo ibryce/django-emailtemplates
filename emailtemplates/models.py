@@ -12,6 +12,8 @@ class ModelTemplate(csky_models.SlugModel):
     body = models.TextField()
 
     def validate_context(self, context_dict):
+        if 'site' not in context_dict:
+            context_dict['site'] = Site.objects.get_current()
         for required_context in self.required_contexts.all():
             if required_context.key not in context_dict:
                 raise template.VariableDoesNotExist(required_context.key)
@@ -70,5 +72,5 @@ class EmailTemplate(ModelTemplate):
 
     @staticmethod
     def send_template(slug, to_address, context={}, attachments=None):
-        template = EmailTemplate.get_by_slug(slug)
+        template = EmailTemplate.objects.get_by_slug(slug)
         return template.send(to_address, context, attachments)
