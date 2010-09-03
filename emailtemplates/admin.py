@@ -20,8 +20,8 @@ class ModelTemplateAdmin(csky_admin.DefaultModelAdmin):
 
 
 class EmailTemplateAdmin(csky_admin.DefaultModelAdmin):
-    list_display = ('name', 'slug', 'visible_from_address')
-    search_fields = ('name', 'slug', 'from_address', 'body')
+    list_display = ('name', 'slug', 'subject', 'visible_from_address')
+    search_fields = ('name', 'slug', 'subject', 'from_address', 'body')
     fieldsets = (
         (None, {'fields': ('name', 'slug', 'from_address')}),
         ('Body', {'fields': ('subject', 'body', 'txt_body')}),
