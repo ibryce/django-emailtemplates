@@ -5,7 +5,12 @@ from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.defaultfilters import striptags, linebreaksbr
 
+from csky.utils import resolve_class_setting
 from csky import models as csky_models
+
+
+def _get_template_class():
+    return resolve_class_setting('EMAILTEMPLATES_TEMPLATE_CLASS', "django.template.Template")
 
 
 class ModelTemplate(csky_models.SlugModel):
@@ -25,7 +30,8 @@ class ModelTemplate(csky_models.SlugModel):
     def render_string(self, template_text, context_dict):
         if self.validate_context(context_dict):
             c = template.Context(context_dict)
-            t = template.Template(template_text)
+            tmpl_class = _get_template_class()
+            t = tmpl_class(template_text)
             return t.render(c)
         return None
 

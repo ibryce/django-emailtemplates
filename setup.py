@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import emailtemplates
 
 setup(
     name='django-emailtemplates',
-    version='0.9.3',
+    version=".".join(map(str, emailtemplates.VERSION)),
     packages = find_packages(),
 
     author = 'Concentric Sky',
