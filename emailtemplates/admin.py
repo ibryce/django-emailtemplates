@@ -1,3 +1,9 @@
+
+
+# Copyright 2011 Concentric Sky, Inc. All Rights Reserved
+# http://www.concentricsky.com/
+# This code may not be used without permission
+
 from django.contrib import admin
 from django import forms
 from csky import admin as csky_admin

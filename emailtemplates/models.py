@@ -1,3 +1,9 @@
+
+
+# Copyright 2011 Concentric Sky, Inc. All Rights Reserved
+# http://www.concentricsky.com/
+# This code may not be used without permission
+
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
