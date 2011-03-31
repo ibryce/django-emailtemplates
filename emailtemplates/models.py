@@ -77,8 +77,8 @@ class EmailTemplate(ModelTemplate):
         msg.attach_alternative(html_body, "text/html")
 
         if attachments is not None:
-                for attach in attachments:
-                        msg.attach(*attach)
+            for attach in attachments:
+                msg.attach(*attach)
 
         return msg.send()
 
