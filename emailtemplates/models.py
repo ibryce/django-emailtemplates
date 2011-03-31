@@ -68,12 +68,13 @@ class EmailTemplate(ModelTemplate):
         return 'no-reply@%s' % site.domain
 
     def send(self, to_address, context={}, attachments=None):
+    def send(self, to_address, context={}, attachments=None, headers=None):
         html_body = self.render(context)
         text_body = self.txt_body or striptags(html_body)
         subject = self.render_string(self.subject, context)
         if isinstance(to_address, (str,unicode)):
             to_address = (to_address,)
-        msg = EmailMultiAlternatives(subject, text_body, self.visible_from_address(), to_address)
+        msg = EmailMultiAlternatives(subject, text_body, self.visible_from_address(), to_address, headers=headers)
         msg.attach_alternative(html_body, "text/html")
 
         if attachments is not None:
@@ -83,6 +84,6 @@ class EmailTemplate(ModelTemplate):
         return msg.send()
 
     @staticmethod
-    def send_template(slug, to_address, context={}, attachments=None):
+    def send_template(slug, to_address, context={}, attachments=None, headers=None):
         template = EmailTemplate.objects.get_by_slug(slug)
-        return template.send(to_address, context, attachments)
+        return template.send(to_address, context, attachments, headers)
