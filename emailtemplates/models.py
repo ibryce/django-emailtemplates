@@ -61,16 +61,23 @@ class EmailTemplate(ModelTemplate):
     txt_body = models.TextField(blank=True, null=True, help_text="If present use as the plaintext body")
     from_address = models.CharField(max_length=1024, blank=True, null=True, help_text="Specify as Full Name &lt;email@address> <br/>defaults to &lt;no-reply@SITE>")
 
+    def render_txt(self, context_dict):
+        if self.txt_body:
+            return self.render_string(self.txt_body, context_dict)
+    
     def visible_from_address(self):
         if self.from_address:
             return self.from_address
         site = Site.objects.get_current()
-        return 'no-reply@%s' % site.domain
-
-    def send(self, to_address, context={}, attachments=None):
+        if site.name:
+            return '%s <no-reply@%s>' % (site.name, site.domain)
+        else:
+            return 'no-reply@%s' % site.domain
+    
     def send(self, to_address, context={}, attachments=None, headers=None):
         html_body = self.render(context)
-        text_body = self.txt_body or striptags(html_body)
+        text_body = self.render_txt(context) or striptags(html_body)
+        
         subject = self.render_string(self.subject, context)
         if isinstance(to_address, (str,unicode)):
             to_address = (to_address,)
