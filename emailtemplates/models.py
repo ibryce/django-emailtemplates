@@ -19,15 +19,21 @@ from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.defaultfilters import striptags, linebreaksbr
 
-from csky.utils import resolve_class_setting
-from csky import models as csky_models
+from basic_models import models as basic_models
 
 
 def _get_template_class():
-    return resolve_class_setting('EMAILTEMPLATES_TEMPLATE_CLASS', "django.template.Template")
+    template_class = getattr(settings, 'EMAILTEMPLATES_TEMPLATE_CLASS', "django.template.Template")
+    if template_class is None or '.' not in template_class:
+        return None
+    idx = template_class.rindex('.')
+    mod = template_class[:idx]
+    cls = template_class[idx + 1:]
+    __import__(mod)
+    return getattr(sys.modules[mod], cls)
 
 
-class ModelTemplate(csky_models.SlugModel):
+class ModelTemplate(basic_models.SlugModel):
     body = models.TextField()
 
     def validate_context(self, context_dict):
@@ -53,7 +59,7 @@ class ModelTemplate(csky_models.SlugModel):
         return self.render_string(self.body, context_dict)
 
 
-class RequiredContextItem(csky_models.DefaultUserModel):
+class RequiredContextItem(basic_models.DefaultUserModel):
     template = models.ForeignKey(ModelTemplate, related_name='required_contexts')
     key = models.SlugField(max_length=64)
     type = models.ForeignKey(ContentType, blank=True, null=True)

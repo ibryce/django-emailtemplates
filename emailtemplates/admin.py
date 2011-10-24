@@ -14,7 +14,8 @@
 
 from django.contrib import admin
 from django import forms
-from csky import admin as csky_admin
+from basic_models import admin as basic_admin
+
 from emailtemplates.models import *
 
 
@@ -23,7 +24,7 @@ class RequiredContextItemInline(admin.TabularInline):
     extra = 1
 
 
-class ModelTemplateAdmin(csky_admin.DefaultModelAdmin):
+class ModelTemplateAdmin(basic_admin.DefaultModelAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name', 'slug', 'body')
     fieldsets = (
@@ -33,7 +34,7 @@ class ModelTemplateAdmin(csky_admin.DefaultModelAdmin):
 #admin.site.register(ModelTemplate, ModelTemplateAdmin)
 
 
-class EmailTemplateAdmin(csky_admin.DefaultModelAdmin):
+class EmailTemplateAdmin(basic_admin.DefaultModelAdmin):
     list_display = ('name', 'slug', 'subject', 'visible_from_address')
     search_fields = ('name', 'slug', 'subject', 'from_address', 'body')
     fieldsets = (
