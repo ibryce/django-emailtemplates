@@ -59,7 +59,7 @@ class ModelTemplate(basic_models.SlugModel):
         return self.render_string(self.body, context_dict)
 
 
-class RequiredContextItem(basic_models.DefaultUserModel):
+class RequiredContextItem(basic_models.DefaultModel):
     template = models.ForeignKey(ModelTemplate, related_name='required_contexts')
     key = models.SlugField(max_length=64)
     type = models.ForeignKey(ContentType, blank=True, null=True)
