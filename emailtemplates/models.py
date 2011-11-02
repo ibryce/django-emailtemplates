@@ -18,6 +18,8 @@ from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.defaultfilters import striptags, linebreaksbr
+from django.conf import settings
+import sys
 
 from basic_models import models as basic_models
 
